@@ -117,8 +117,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		ImGui::DragFloat3("AABB1min", &aabb1.min.x, 0.1f, -1.0f, 5.0f);
 		ImGui::DragFloat3("AABB1max", &aabb1.max.x, 0.1f, -1.0f, 5.0f);
-		ImGui::DragFloat3("sphereC", &segment.origin.x, 0.1f, -1.0f, 5.0f);
-		ImGui::DragFloat3("sphereR", &segment.diff.x, 0.1f, -1.0f, 5.0f);
+		ImGui::DragFloat3("SegO", &segment.origin.x, 0.1f, -1.0f, 5.0f);
+		ImGui::DragFloat3("SegD", &segment.diff.x, 0.1f, -1.0f, 5.0f);
 		ImGui::End();
 
 		///
