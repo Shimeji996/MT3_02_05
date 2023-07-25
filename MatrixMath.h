@@ -53,6 +53,10 @@ public:
 
 	static Matrix4x4 MakeIdentity4x4();
 
+	static float Mymax(float a, float b);
+
+	static float Mymin(float a, float b);
+
 	static bool IsCollision(const Sphere& s1, const Sphere& s2);
 
 	static bool IsCollision(const Sphere& s1, const Plane& plane);
@@ -68,5 +72,11 @@ public:
 	static bool IsCollision(const AABB& aabb1, const AABB& aabb2);
 
 	static bool IsCollision(const AABB& aabb, const Sphere& sphere);
+
+	static bool IsCollision(const AABB& aabb, const Segment& segment);
+
+	static bool IsCollision(const AABB& aabb, const Line& line);
+
+	static bool IsCollision(const AABB& aabb, const Ray& ray);
 };
 

@@ -245,8 +245,6 @@ Matrix4x4 MatrixMath::MakeOrthographicMatrix(float left, float top, float right,
 	result.m[3][1] = (top + bottom) / (bottom - top);
 	result.m[3][2] = (nearClip) / (nearClip - farClip);
 
-
-
 	return result;
 }
 Matrix4x4 MatrixMath::MakeViewPortMatrix(float left, float top, float width, float height, float minDepth, float maxDepth) {
@@ -499,7 +497,25 @@ Matrix4x4 MatrixMath::MakeIdentity4x4() {
 	return result;
 }
 
+float MatrixMath::Mymax(float a, float b) {
+	if (a > b) {
+		return a;
+	}
+	else if (a < b) {
+		return b;
+	}
+	return a;
+}
 
+float MatrixMath::Mymin(float a, float b) {
+	if (a < b) {
+		return a;
+	}
+	else if (a > b) {
+		return b;
+	}
+	return a;
+}
 
 bool MatrixMath::IsCollision(const Sphere& s1, const Sphere& s2) {
 	float distance = Length(Subtract(s2.center, s1.center));
@@ -633,4 +649,200 @@ bool MatrixMath::IsCollision(const AABB& aabb, const Sphere& sphere) {
 
 	return false;
 
+}
+
+bool MatrixMath::IsCollision(const AABB& aabb, const Segment& segment) {
+	Plane xMin;
+	Plane xMAx;
+
+	Plane yMin;
+	Plane yMax;
+
+	Plane zMin;
+	Plane zMax;
+
+	xMin.normal = { 1, 0, 0 };
+	xMin.distance = aabb.min.x;
+	xMAx.normal = { 1, 0, 0 };
+	xMAx.distance = aabb.max.x;
+
+	yMin.normal = { 0, 1, 0 };
+	yMin.distance = aabb.min.y;
+
+	yMax.normal = { 0, 1, 0 };
+	yMax.distance = aabb.max.y;
+
+	zMin.normal = { 0, 0, 1 };
+	zMin.distance = aabb.min.z;
+
+	zMax.normal = { 0, 0, 1 };
+	zMax.distance = aabb.max.z;
+
+	float dot = Dot(xMin.normal, segment.diff);
+	float tMin = (xMin.distance - Dot(segment.origin, xMin.normal)) / dot;
+	dot = Dot(xMAx.normal, segment.diff);
+	float tMax = (xMAx.distance - Dot(segment.origin, xMAx.normal)) / dot;
+
+	float tNearX = std::min(tMin, tMax);
+	float tFarX = std::max(tMin, tMax);
+
+
+	dot = Dot(yMin.normal, segment.diff);
+	tMin = (yMin.distance - Dot(segment.origin, yMin.normal)) / dot;
+	dot = Dot(yMax.normal, segment.diff);
+	tMax = (yMax.distance - Dot(segment.origin, yMax.normal)) / dot;
+
+	float tNearY = std::min(tMin, tMax);
+	float tFarY = std::max(tMin, tMax);
+
+	dot = Dot(zMin.normal, segment.diff);
+	tMin = (zMin.distance - Dot(segment.origin, zMin.normal)) / dot;
+	dot = Dot(zMax.normal, segment.diff);
+	tMax = (zMax.distance - Dot(segment.origin, zMax.normal)) / dot;
+
+	float tNearZ = std::min(tMin, tMax);
+	float tFarZ = std::max(tMin, tMax);
+
+
+	float tNear = std::max(std::max(tNearX, tNearY), tNearZ);
+	float tFar = std::min(std::min(tFarX, tFarY), tFarZ);
+
+	if (tNear <= tFar) {
+		if ((tNear < 1.0f) && (0.0f < tFar)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool MatrixMath::IsCollision(const AABB& aabb, const Line& line) {
+
+	Plane xMin;
+	Plane xMAx;
+
+	Plane yMin;
+	Plane yMax;
+
+	Plane zMin;
+	Plane zMax;
+
+
+	xMin.normal = { 1, 0, 0 };
+	xMin.distance = aabb.min.x;
+	xMAx.normal = { 1, 0, 0 };
+	xMAx.distance = aabb.max.x;
+
+	yMin.normal = { 0, 1, 0 };
+	yMin.distance = aabb.min.y;
+
+	yMax.normal = { 0, 1, 0 };
+	yMax.distance = aabb.max.y;
+
+	zMin.normal = { 0, 0, 1 };
+	zMin.distance = aabb.min.z;
+
+	zMax.normal = { 0, 0, 1 };
+	zMax.distance = aabb.max.z;
+
+	float dot = Dot(xMin.normal, line.diff);
+	float tMin = (xMin.distance - Dot(line.origin, xMin.normal)) / dot;
+	dot = Dot(xMAx.normal, line.diff);
+	float tMax = (xMAx.distance - Dot(line.origin, xMAx.normal)) / dot;
+
+	float tNearX = std::min(tMin, tMax);
+	float tFarX = std::max(tMin, tMax);
+
+
+	dot = Dot(yMin.normal, line.diff);
+	tMin = (yMin.distance - Dot(line.origin, yMin.normal)) / dot;
+	dot = Dot(yMax.normal, line.diff);
+	tMax = (yMax.distance - Dot(line.origin, yMax.normal)) / dot;
+
+	float tNearY = std::min(tMin, tMax);
+	float tFarY = std::max(tMin, tMax);
+
+	dot = Dot(zMin.normal, line.diff);
+	tMin = (zMin.distance - Dot(line.origin, zMin.normal)) / dot;
+	dot = Dot(zMax.normal, line.diff);
+	tMax = (zMax.distance - Dot(line.origin, zMax.normal)) / dot;
+
+	float tNearZ = std::min(tMin, tMax);
+	float tFarZ = std::max(tMin, tMax);
+
+
+	float tNear = std::max(std::max(tNearX, tNearY), tNearZ);
+	float tFar = std::min(std::min(tFarX, tFarY), tFarZ);
+
+	if (tNear <= tFar) {
+		return true;
+	}
+
+	return false;
+}
+
+bool MatrixMath::IsCollision(const AABB& aabb, const Ray& ray) {
+
+	Plane xMin;
+	Plane xMAx;
+
+	Plane yMin;
+	Plane yMax;
+
+	Plane zMin;
+	Plane zMax;
+
+	xMin.normal = { 1, 0, 0 };
+	xMin.distance = aabb.min.x;
+	xMAx.normal = { 1, 0, 0 };
+	xMAx.distance = aabb.max.x;
+
+	yMin.normal = { 0, 1, 0 };
+	yMin.distance = aabb.min.y;
+
+	yMax.normal = { 0, 1, 0 };
+	yMax.distance = aabb.max.y;
+
+	zMin.normal = { 0, 0, 1 };
+	zMin.distance = aabb.min.z;
+
+	zMax.normal = { 0, 0, 1 };
+	zMax.distance = aabb.max.z;
+
+	float dot = Dot(xMin.normal, ray.diff);
+	float tMin = (xMin.distance - Dot(ray.origin, xMin.normal)) / dot;
+	dot = Dot(xMAx.normal, ray.diff);
+	float tMax = (xMAx.distance - Dot(ray.origin, xMAx.normal)) / dot;
+
+	float tNearX = std::min(tMin, tMax);
+	float tFarX = std::max(tMin, tMax);
+
+
+	dot = Dot(yMin.normal, ray.diff);
+	tMin = (yMin.distance - Dot(ray.origin, yMin.normal)) / dot;
+	dot = Dot(yMax.normal, ray.diff);
+	tMax = (yMax.distance - Dot(ray.origin, yMax.normal)) / dot;
+
+	float tNearY = std::min(tMin, tMax);
+	float tFarY = std::max(tMin, tMax);
+
+	dot = Dot(zMin.normal, ray.diff);
+	tMin = (zMin.distance - Dot(ray.origin, zMin.normal)) / dot;
+	dot = Dot(zMax.normal, ray.diff);
+	tMax = (zMax.distance - Dot(ray.origin, zMax.normal)) / dot;
+
+	float tNearZ = std::min(tMin, tMax);
+	float tFarZ = std::max(tMin, tMax);
+
+
+	float tNear = std::max(std::max(tNearX, tNearY), tNearZ);
+	float tFar = std::min(std::min(tFarX, tFarY), tFarZ);
+
+	if (tNear <= tFar) {
+		if (0.0f < tFar) {
+			return true;
+		}
+	}
+
+	return false;
 }
