@@ -14,7 +14,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ライブラリの初期化
 	Novice::Initialize(kWindowTitle, 1280, 720);
 
-	//カメラ関係
 	Vector3 cameraTranslate{ 0.0f, 1.9f, -6.49f };
 	Vector3 cameraRotate{ 0.26f, 0.0f, 0.0f };
 
@@ -22,7 +21,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char keys[256] = {0};
 	char preKeys[256] = {0};
 
-	//平面
 	AABB aabb1{
 		.min{-0.5f, -0.5f, -0.5f},
 		.max{ 0.0f, 0.0f, 0.0f}
@@ -32,7 +30,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		.max{ 1.0f, 1.0f, 1.0f}
 	};
 
-	//色
 	uint32_t colorS1 = WHITE;
 	uint32_t colorS2 = WHITE;
 
