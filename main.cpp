@@ -21,18 +21,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char keys[256] = {0};
 	char preKeys[256] = {0};
 
-	AABB aabb1{
-		.min{-0.5f, -0.5f, -0.5f},
-		.max{ 0.0f, 0.0f, 0.0f}
-	};
-	
-	Segment segment{
-		.origin{-0.7f, 0.3f, 0.0f},
-		.diff{2.0f, -0.5f, 0.0f}
+	Vector3 controlPoints[3] = {
+		{-0.8f, 0.58f, 1.0f},
+		{1.76f, 1.0f, -0.3f},
+		{0.94f, -0.7f, 2.3f},
 	};
 
 	uint32_t colorS1 = WHITE;
-	uint32_t colorS2 = WHITE;
 
 	Matrix4x4 worldMatrix = MatrixMath::MakeAffineMatrix({ 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f });
 	Matrix4x4 cameraMatrix = MatrixMath::MakeAffineMatrix({ 1.0f, 1.0f, 1.0f }, cameraRotate, cameraTranslate);
@@ -91,13 +86,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		worldViewProjectionMatrix = MatrixMath::Multiply(worldMatrix, MatrixMath::Multiply(viewMatrix, projectionMatrix));
 		viewportMatrix = MatrixMath::MakeViewPortMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
-		if (MatrixMath::IsCollision(aabb1, segment)) {
-			colorS1 = RED;
-		}
-		else {
-			colorS1 = WHITE;
-		}
-
 		///
 		/// ↑更新処理ここまで
 		///
@@ -108,17 +96,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		MatrixDraw::DrawGrid(worldViewProjectionMatrix, viewportMatrix);
 
-		MatrixDraw::DrawAABB(aabb1, worldViewProjectionMatrix, viewportMatrix, colorS1);
-		MatrixDraw::DrawLine(segment, worldViewProjectionMatrix, viewportMatrix, colorS2);
+		MatrixDraw::DrawBezier(controlPoints[0], controlPoints[1], controlPoints[2], worldViewProjectionMatrix, viewportMatrix, colorS1);
 
 		ImGui::Begin("Debug");
 		ImGui::DragFloat3("cameraTRa", &cameraTranslate.x, 0.1f, -50.0f, 50.0f);
 		ImGui::DragFloat3("cameraRot", &cameraRotate.x, 0.1f, -50.0f, 50.0f);
 
-		ImGui::DragFloat3("AABB1min", &aabb1.min.x, 0.1f, -1.0f, 5.0f);
-		ImGui::DragFloat3("AABB1max", &aabb1.max.x, 0.1f, -1.0f, 5.0f);
-		ImGui::DragFloat3("SegO", &segment.origin.x, 0.1f, -1.0f, 5.0f);
-		ImGui::DragFloat3("SegD", &segment.diff.x, 0.1f, -1.0f, 5.0f);
+		ImGui::DragFloat3("controlPoint0", &controlPoints[0].x, 0.1f, -50.0f, 50.0f);
+		ImGui::DragFloat3("controlPoint1", &controlPoints[1].x, 0.1f, -50.0f, 50.0f);
+		ImGui::DragFloat3("controlPoint2", &controlPoints[2].x, 0.1f, -50.0f, 50.0f);
+
 		ImGui::End();
 
 		///
